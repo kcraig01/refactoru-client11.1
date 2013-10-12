@@ -67,11 +67,13 @@ var Plate = function(name, description, price, items){
 	amICitrus = undefined;
 };
 // typeof plates = num
-var Order = function(plates){
+var Order = function(name, plates){
+	this.name = name;
 	this.plates = plates;
 };
 // typeof num
-var Menu = function(plates){
+var Menu = function(name, plates){
+	this.name = name; 
 	this.plates = plates;
 };
 // typeof name = string
@@ -112,7 +114,7 @@ var glutenFreeItems = [glutenFreeCookie, salad];
 var glutenFreePlate2 = new Plate ("gluten free", "gluten free", 300, glutenFreeItems);
 
 var allPlates = [plate1, plate2, plate3];
-var hungry = new Order(allPlates);
+var hungry = new Order("Order1",allPlates);
 
 //3. toString method for objects
 Plate.prototype.toString = function(){
@@ -222,7 +224,7 @@ var chicken = new FoodItem("chicken", 250, false, false, true);
 var beans = new FoodItem("beans", 120, true, true, true);
 var peppers = new FoodItem("peppers", 50, true, true, true);
 var burritoItems = [beans, chicken, cheese, peppers];
-var burritoPlate = new Plate ("Burrito Plate", "the best burrito in town", 12.50, burritoItems);
+var burritoPlate = new Plate ("BurritoPlate", "the best burrito in town", 12.50, burritoItems);
 burritoPlate.toString();
 console.log(burritoPlate.toString());
 
@@ -231,7 +233,7 @@ var avacado = new FoodItem("avacado", 250, true, true, true);
 var lemon = new FoodItem("lemon", 100, true, true, false);
 var chips = new FoodItem("chips", 50, true, false, true);
 var guacamoleItems = [avacado, lemon, chips, peppers];
-var guacamolePlate = new Plate ("Guacamole Plate", "spicy", 10, guacamoleItems);
+var guacamolePlate = new Plate ("GuacamolePlate", "spicy", 10, guacamoleItems);
 console.log(guacamolePlate.toString());
 
 //Margarita Drink
@@ -246,7 +248,7 @@ console.log(margaritaDrink.toString());
 
 //7. Instantiate a Menu 
 var menuItems = [burritoPlate, guacamolePlate, margaritaDrink]
-var dinnerMenu = new Menu(menuItems);
+var dinnerMenu = new Menu("dinnerMenu", menuItems);
 console.log(dinnerMenu.toString());
 
 //8. Instantiate Restaurant
@@ -254,20 +256,80 @@ var theRestaurant = new Restaurant("Kerry-oke ", "the best mexican karaoke resta
 
 console.log(theRestaurant.toString());
 
+//11.1 - Restaurant UI
+Menu.prototype.createPlates = function (arrayPlate, newDiv, wheretoAppend){
+			for (i = 0; i<arrayPlate.length; i++){
+			var plateItemsDiv =  '<div class = '+arrayPlate[i].name+'>{name}</div>'.supplant(arrayPlate[i]);
+			var appendMe =  $('.'+wheretoAppend+'').append(plateItemsDiv);	
+			console.log(arrayPlate[i]);
 
-FoodItem.prototype.create = function(){
-	var newDiv = '<div class = "newItemDiv">{name}</div>'.supplant(this);
-	var appendMe =  $('.firstclass').append(newDiv);
+		}
+	// return appendMe; 
+}
+
+FoodItem.prototype.create = function(newDiv, wheretoAppend){
+	var foodItemDiv = '<div class = '+this.name+'>{name}</div>'.supplant(this);
+	var appendMe =  $('.'+wheretoAppend+'').append(foodItemDiv);
 	return appendMe;
 }
 
+Menu.prototype.create = function(){
+	// var menuItemDiv = '<div class = "menuItemDiv">Menu</div>';
+	// var menuAppend = $('.firstclass').append(menuItemDiv);
+	var newMenu = FoodItem.prototype.create.call(this, 'menu', 'menuItemDiv');
+	var newMenuPlate = this.createPlates(this.plates, 'plateItems', this.name);
+	// var plateArray = this.plates;
+	// console.log(plateArray.items);
+	// var plateIngredients = Menu.prototype.createPlates.call(plateArray, plateArray.items, 'foodItems', plateArray.name);
+	}
+
+
+Drink.prototype.create = function(){
+	var drinkItemDiv = FoodItem.prototype.create.call(this, 'drinkItemDiv', 'allDrinks');
+}
+
 Plate.prototype.create = function(){
-	var newDiv = FoodItem.prototype.create.call(this);
+	console.log(this.name);
+	var makePlate = FoodItem.prototype.create.call(this,'plateItems','menuItemDiv');
+	var plateDiv = Menu.prototype.createPlates.call(this, this.items,'foodItems',this.name);
+}
+ 
+Order.prototype.create = function(){
+	// console.log(this.name);
+//WHY isnt this working? Can add orderitem div to menu div. Add first plate. But cannot add plate contents or additional plates in array?
 	
+	for (i = 0; i<this.plates.length; i++){
+		console.log(this.name);
+	 var makeOrder = FoodItem.prototype.create.call(this,'orderItems','allOrdersDiv');
+	 var orderDiv = Menu.prototype.createPlates.call(this.plates[i], this.plates,'orderItems', this.name);
+	 // var platesInOrder = (this.plates[i]).create(this.plates,'orderItems',this.name);
+	}
+	// return platesInOrder;
+	// console.log(platesInOrder);
+}
+
+Restaurant.prototype.create = function(){
+	var allDrinksDiv = '<div class = "allDrinks">Drinks</div>';
+	var drinkAppend = $('.firstclass').append(allDrinksDiv);
+	var menuItemDiv = '<div class = "menuItemDiv">Menu</div>';
+	var menuAppend = $('.firstclass').append(menuItemDiv);
+	var allOrdersDiv = '<div class = "allOrdersDiv">Orders</div>';
+	var drinkAppend = $('.firstclass').append(allOrdersDiv);
+	var restaurantDiv = FoodItem.prototype.create.call(this);
 }
 
 // $('.firstclass').append(bread.create());
-bread.create();
-isVeganPlate.create();
+theRestaurant.create();
+// dinnerMenu.create();
+// guacamolePlate.create();
+// margaritaDrink.create();
+// hungry.create();
+// margaritaDrink.create();
+hungry.create();
+// console.log(dinnerMenu.plates);
+// bread.create();
+// notGlutenFreePlate.create();
+// margaritaDrink.create();
+
 
 });
