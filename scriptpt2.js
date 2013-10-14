@@ -252,14 +252,14 @@ var dinnerMenu = new Menu("dinnerMenu", menuItems);
 console.log(dinnerMenu.toString());
 
 //8. Instantiate Restaurant
-var theRestaurant = new Restaurant("Kerry-oke ", "the best mexican karaoke restaurant in downtown Boulder", dinnerMenu);
+var theRestaurant = new Restaurant("Kerryoke ", "the best mexican karaoke restaurant in downtown Boulder", dinnerMenu);
 
 console.log(theRestaurant.toString());
 
 //11.1 - Restaurant UI
 Menu.prototype.createPlates = function (arrayPlate, newDiv, wheretoAppend){
 			for (i = 0; i<arrayPlate.length; i++){
-			var plateItemsDiv =  '<div class = '+arrayPlate[i].name+'>{name}</div>'.supplant(arrayPlate[i]);
+			var plateItemsDiv =  '<div class ='+arrayPlate[i].name+'>{name}</div>'.supplant(arrayPlate[i]);
 			var appendMe =  $('.'+wheretoAppend+'').append(plateItemsDiv);	
 			console.log(arrayPlate[i]);
 
@@ -273,19 +273,11 @@ FoodItem.prototype.create = function(newDiv, wheretoAppend){
 	return appendMe;
 }
 
-Menu.prototype.create = function(){
-	// var menuItemDiv = '<div class = "menuItemDiv">Menu</div>';
-	// var menuAppend = $('.firstclass').append(menuItemDiv);
-	var newMenu = FoodItem.prototype.create.call(this, 'menu', 'menuItemDiv');
-	var newMenuPlate = this.createPlates(this.plates, 'plateItems', this.name);
-	// var plateArray = this.plates;
-	// console.log(plateArray.items);
-	// var plateIngredients = Menu.prototype.createPlates.call(plateArray, plateArray.items, 'foodItems', plateArray.name);
-	}
-
 
 Drink.prototype.create = function(){
 	var drinkItemDiv = FoodItem.prototype.create.call(this, 'drinkItemDiv', 'allDrinks');
+	var drinkDiv = Menu.prototype.createPlates.call(this, this.items,'foodItems',this.name);
+
 }
 
 Plate.prototype.create = function(){
@@ -293,43 +285,103 @@ Plate.prototype.create = function(){
 	var makePlate = FoodItem.prototype.create.call(this,'plateItems','menuItemDiv');
 	var plateDiv = Menu.prototype.createPlates.call(this, this.items,'foodItems',this.name);
 }
+
+Plate.prototype.createMenu = function(menuName){
+	console.log(this.name);
+	var makePlate = FoodItem.prototype.create.call(this,'plateItems',menuName);
+	var plateDiv = Menu.prototype.createPlates.call(this, this.items,'foodItems',this.name);
+}
+
+Plate.prototype.createOrder = function(orderName){
+	var makePlate = FoodItem.prototype.create.call(this,'plateItems',orderName);
+	var plateDiv = Menu.prototype.createPlates.call(this, this.items,'foodItems',this.name);
+}
+
+Menu.prototype.create = function(){
+	// var menuItemDiv = '<div class = "menuItemDiv">Menu</div>';
+	// var menuAppend = $('.firstclass').append(menuItemDiv);
+	var newMenu = FoodItem.prototype.create.call(this, 'menu', 'menuItemDiv');
+
+	for (i = 0; i<this.plates.length;i++){
+		var platesinMenu = this.plates[i].createMenu(this.name);
+	}
+	// var newMenuPlate = this.createPlates(this.plates, 'plateItems', this.name);
+	return platesinMenu;
+	// var plateArray = this.plates;
+	// console.log(plateArray.items);
+	// var plateIngredients = Menu.prototype.createPlates.call(plateArray, plateArray.items, 'foodItems', plateArray.name);
+	}
+
  
 Order.prototype.create = function(){
 	// console.log(this.name);
 //WHY isnt this working? Can add orderitem div to menu div. Add first plate. But cannot add plate contents or additional plates in array?
-	
-	for (i = 0; i<this.plates.length; i++){
-		console.log(this.name);
-	 var makeOrder = FoodItem.prototype.create.call(this,'orderItems','allOrdersDiv');
-	 var orderDiv = Menu.prototype.createPlates.call(this.plates[i], this.plates,'orderItems', this.name);
+	var makeOrder = FoodItem.prototype.create.call(this,'orderItems','allOrdersDiv');
+
+	for (i=0; i<this.plates.length; i++){
+		console.log(this.plates);
+	 var platesInOrder = this.plates[i].createOrder(this.name);
+	 // var orderDiv = Menu.prototype.createPlates.call(this.plates[i], this.plates,'orderItems', this.name);
 	 // var platesInOrder = (this.plates[i]).create(this.plates,'orderItems',this.name);
 	}
-	// return platesInOrder;
+	return platesInOrder;
 	// console.log(platesInOrder);
 }
 
 Restaurant.prototype.create = function(){
+	var restaurantDiv = FoodItem.prototype.create.call(this, 'restaurant', 'main');
+	$('.Kerryoke').append('<h5>'+this.description+'</h5>');
 	var allDrinksDiv = '<div class = "allDrinks">Drinks</div>';
-	var drinkAppend = $('.firstclass').append(allDrinksDiv);
+	var drinkAppend = $('.second').append(allDrinksDiv);
 	var menuItemDiv = '<div class = "menuItemDiv">Menu</div>';
 	var menuAppend = $('.firstclass').append(menuItemDiv);
 	var allOrdersDiv = '<div class = "allOrdersDiv">Orders</div>';
-	var drinkAppend = $('.firstclass').append(allOrdersDiv);
-	var restaurantDiv = FoodItem.prototype.create.call(this);
+	var drinkAppend = $('.third').append(allOrdersDiv);
 }
 
 // $('.firstclass').append(bread.create());
 theRestaurant.create();
-// dinnerMenu.create();
-// guacamolePlate.create();
-// margaritaDrink.create();
+
+
+dinnerMenu.create();
+guacamolePlate.create();
+burritoPlate.create();
+margaritaDrink.create();
 // hungry.create();
-// margaritaDrink.create();
-hungry.create();
+
+// hungry.create();
 // console.log(dinnerMenu.plates);
 // bread.create();
 // notGlutenFreePlate.create();
 // margaritaDrink.create();
+
+
+$( '.menuItemDiv' ).children().hide();
+
+$('.firstclass').on('click', function(){
+	$('.menuItemDiv').children("[class*='Plate']").show();
+	$("[class*='Plate']").children().hide();
+	$("[class*='Plate']").append('<button type = "button" class =  btn btn-default order">Add to Order</button>');
+})
+
+// $(document).on('click','.firstclass', function(e){
+// 	$("[class*='Plate']").append('<button type = "button" class = "btn btn-default">View Ingredients</button>');
+// 	e.stopPropagation();
+// 	})
+
+$(document).on('click','.btn', function(){
+	console.log($(this).parent());
+	var addtoOrder = $(this).parent().clone();
+	console.log(addtoOrder.first());
+	var addtoOrder2 = addtoOrder.first();
+	console.log(addtoOrder2);
+	$(addtoOrder2).appendTo($('.third'));
+	// $(this).closest("div").clone().appendTo($('.third'));
+})
+	
+
+// $("[class*='Plate']").on('click', function(){
+	
 
 
 });
