@@ -27,21 +27,6 @@ FoodItem.prototype.toString = function(){
 	return stringFood;
 };
 
-
-
-
-//instantiation of object 
-var bread = new FoodItem("Bread", 210, true, false, false);
-console.log(bread.toString());
-
-var salad = new FoodItem("salad", 300, false, true, true);
-console.log(salad.toString());
-
-var chocolate = new FoodItem("chocolate", 400, false, false, true);
-console.log(chocolate.toString());
-
-var glutenFreeCookie = new FoodItem("glutenfree", 400, true, true, true);
-
 //PART 2.
 //Constructors for objects 
 
@@ -53,9 +38,9 @@ var Drink = function(name, description, items){
 	this.description = description;
 	this.items = items;
 };
-// typeof name = string
-// typeof description = string
-// typeof price = num
+// typeof name = string, 
+// typeof description = string, 
+// typeof price = num, 
 // typeof items = array
 var Plate = function(name, description, price, items){
 	this.name = name;
@@ -89,8 +74,21 @@ var Customer = function (dietaryPreference){
 	this.dietaryPreference = dietaryPreference;
 };
 
-// Created plates and items for testing 
+//instantiation of object 
+// Created plates and items for testing (name, calories, vegan, glutenfree, citrusfree)
+var bread = new FoodItem("Bread", 210, true, false, false);
+console.log(bread.toString());
+
+var salad = new FoodItem("salad", 300, false, true, true);
+console.log(salad.toString());
+
+var chocolate = new FoodItem("chocolate", 400, false, false, true);
+console.log(chocolate.toString());
+
+var glutenFreeCookie = new FoodItem("glutenfree", 400, true, true, true);
+
 var someItems = [bread, salad];
+var otheritems = [salad, glutenFreeCookie];
 
 var plate1 = new Plate ("plate1", "delicious", 5, someItems);
 
@@ -110,9 +108,6 @@ var notVeganPlate = new Plate ("not vegan free", "no vegan", 300, notVegan);
 var notGlutenFree = [chocolate, salad];
 var notGlutenFreePlate = new Plate ("not gluten free", "no gluten free", 300, notGlutenFree);
 
-var glutenFreeItems = [glutenFreeCookie, salad];
-var glutenFreePlate2 = new Plate ("gluten free", "gluten free", 300, glutenFreeItems);
-
 var allPlates = [plate1, plate2, plate3];
 var hungry = new Order("Order1",allPlates);
 
@@ -125,13 +120,10 @@ Plate.prototype.toString = function(){
 	return stringPlate;	
 }
 
-
 Order.prototype.toString = function(){
 	var orderString = "Order: " + this.plates;
 	return orderString;
 }
-console.log(hungry.toString());
-
 
 Drink.prototype.toString = function(){
 	var stringDrink = "Drink name: " + this.name + " description: " + this.description + " items: " ;
@@ -143,7 +135,7 @@ Drink.prototype.toString = function(){
 }
 
 Menu.prototype.toString = function(){
-	var stringMenu = " Menu: " + this.plates;
+	var stringMenu = "" + this.plates;
 	return stringMenu;
 }
 
@@ -177,10 +169,6 @@ Plate.prototype.isVegan = function(){
 	}
 };
 
-isVeganPlate.isVegan();
-console.log("Am I vegan?:", amIVegan);
-
-
 //Is it Gluten Free check
 Plate.prototype.isGlutenFree = function(){
 	for (i= 0; i<this.items.length; i++){
@@ -196,9 +184,6 @@ Plate.prototype.isGlutenFree = function(){
 	}
 };
 
-glutenFreePlate2.isGlutenFree();
-console.log("Am I Gluten Free?", amIGluten);
-
 //Is it citrus free check?
 Plate.prototype.isCitrusFree = function(){
 	for (i= 0; i<this.items.length; i++){
@@ -213,9 +198,6 @@ Plate.prototype.isCitrusFree = function(){
 		// return true;
 	}
 };
-notVeganPlate.isCitrusFree();
-console.log("Am I Citrus Free?", amICitrus);
-
 
 //5. Instantiate different Plates
 //Burrito Plate
@@ -247,7 +229,7 @@ console.log(margaritaDrink.toString());
 
 
 //7. Instantiate a Menu 
-var menuItems = [burritoPlate, guacamolePlate, margaritaDrink]
+var menuItems = [ guacamolePlate, burritoPlate,margaritaDrink ]
 var dinnerMenu = new Menu("dinnerMenu", menuItems);
 console.log(dinnerMenu.toString());
 
@@ -258,16 +240,23 @@ console.log(theRestaurant.toString());
 
 //11.1 - Restaurant UI
 Menu.prototype.createPlates = function (arrayPlate, newDiv, wheretoAppend){
+			console.log('here')
 			for (i = 0; i<arrayPlate.length; i++){
+
 			var plateItemsDiv =  '<div class ='+arrayPlate[i].name+'>{name}</div>'.supplant(arrayPlate[i]);
 			var appendMe =  $('.'+wheretoAppend+'').append(plateItemsDiv);	
+			console.log(arrayPlate)
 			console.log(arrayPlate[i]);
+			FoodItem.prototype.create.call(this, arrayPlate.name, this.name)
+		}	
+	
 
-		}
 	// return appendMe; 
 }
 
 FoodItem.prototype.create = function(newDiv, wheretoAppend){
+	console.log(this.name)
+	console.log(wheretoAppend)
 	var foodItemDiv = '<div class = '+this.name+'>{name}</div>'.supplant(this);
 	var appendMe =  $('.'+wheretoAppend+'').append(foodItemDiv);
 	return appendMe;
@@ -280,33 +269,58 @@ Drink.prototype.create = function(){
 
 }
 
-Plate.prototype.create = function(){
+Plate.prototype.create = function(menuName){
 	console.log(this.name);
-	var makePlate = FoodItem.prototype.create.call(this,'plateItems','menuItemDiv');
-	var plateDiv = Menu.prototype.createPlates.call(this, this.items,'foodItems',this.name);
+	var makePlate = FoodItem.prototype.create.call(this,'plateItems', 'dinnerMenu');
+	 // for (i = 0; i<this.items.length;i++){
+	 // 	var plateItemsDiv =  '<div class ='+this.items[i].name+'>{name}</div>'.supplant(this.items[i]);
+		// 	var appendMe =  $('.'+this.name+'').append(plateItemsDiv);	
+	
+		// 	// FoodItem.prototype.create.call(this, arrayPlate.name, this.name)
+		// }
+	// 	console.log(this.plates.length)
+	// 	var menuPlates = this.plates[i]
+	// 	console.log(this.plates[i].name)
+	// 	// var plateDiv = '<div class = '+this.plates[i].name+'>{name}</div>'.supplant(this.plates);
+	// 	// var appendMe =  $('.menuItemDiv').append(plateDiv);
+	// 	// return appendMe;
+	// 	// var plateinMenu = FoodItem.prototype.create.call(this, this.plates[i], this.name);
+	// 	var itemsinMenu = Menu.prototype.createPlates.call(this, this.plates[i], this.name);
+	// var plateDiv = Menu.prototype.createPlates.call(this, this.items,'foodItems',this.name);
+
 }
 
-Plate.prototype.createMenu = function(menuName){
-	console.log(this.name);
-	var makePlate = FoodItem.prototype.create.call(this,'plateItems',menuName);
-	var plateDiv = Menu.prototype.createPlates.call(this, this.items,'foodItems',this.name);
-}
+// Plate.prototype.createMenu = function(menuName){
+// 	console.log(this.name);
+// 	var makePlate = FoodItem.prototype.create.call(this,'plateItems',menuName);
+// 	console.log(this);
+// 	var plateDiv = Menu.prototype.createPlates.call(this,this,'foodItems',this.name);
+// }
 
-Plate.prototype.createOrder = function(orderName){
-	var makePlate = FoodItem.prototype.create.call(this,'plateItems',orderName);
-	var plateDiv = Menu.prototype.createPlates.call(this, this.items,'foodItems',this.name);
-}
+// Plate.prototype.createOrder = function(orderName){
+// 	var makePlate = FoodItem.prototype.create.call(this,'plateItems',orderName);
+// 	var plateDiv = Menu.prototype.createPlates.call(this, this.items,'foodItems',this.name);
+// }
 
 Menu.prototype.create = function(){
 	// var menuItemDiv = '<div class = "menuItemDiv">Menu</div>';
 	// var menuAppend = $('.firstclass').append(menuItemDiv);
 	var newMenu = FoodItem.prototype.create.call(this, 'menu', 'menuItemDiv');
+console.log(this.plates);
 
 	for (i = 0; i<this.plates.length;i++){
-		var platesinMenu = this.plates[i].createMenu(this.name);
+		console.log(this.plates.length)
+		var menuPlates = this.plates[i]
+		console.log(this.plates[i].name)
+		// var plateDiv = '<div class = '+this.plates[i].name+'>{name}</div>'.supplant(this.plates);
+		// var appendMe =  $('.menuItemDiv').append(plateDiv);
+		// return appendMe;
+		var plateinMenu = Plate.prototype.create.call(this.plates[i],dinnerMenu);
+		// var itemsinMenu = Menu.prototype.createPlates.call(this, this.plates[i], this.name);
+		// console.log(this.plates[i].items)
 	}
 	// var newMenuPlate = this.createPlates(this.plates, 'plateItems', this.name);
-	return platesinMenu;
+	return plateinMenu;
 	// var plateArray = this.plates;
 	// console.log(plateArray.items);
 	// var plateIngredients = Menu.prototype.createPlates.call(plateArray, plateArray.items, 'foodItems', plateArray.name);
@@ -319,8 +333,8 @@ Order.prototype.create = function(){
 	var makeOrder = FoodItem.prototype.create.call(this,'orderItems','allOrdersDiv');
 
 	for (i=0; i<this.plates.length; i++){
-		console.log(this.plates);
-	 var platesInOrder = this.plates[i].createOrder(this.name);
+		console.log(this.plates[i]);
+	 var platesInOrder = this.plates[i].create(this.name);
 	 // var orderDiv = Menu.prototype.createPlates.call(this.plates[i], this.plates,'orderItems', this.name);
 	 // var platesInOrder = (this.plates[i]).create(this.plates,'orderItems',this.name);
 	}
@@ -337,16 +351,15 @@ Restaurant.prototype.create = function(){
 	var menuAppend = $('.firstclass').append(menuItemDiv);
 	var allOrdersDiv = '<div class = "allOrdersDiv">Orders</div>';
 	var drinkAppend = $('.third').append(allOrdersDiv);
+	dinnerMenu.create();
 }
 
 // $('.firstclass').append(bread.create());
 theRestaurant.create();
-
-
-dinnerMenu.create();
-guacamolePlate.create();
-burritoPlate.create();
-margaritaDrink.create();
+// dinnerMenu.create();
+// guacamolePlate.create();
+// burritoPlate.create();
+// margaritaDrink.create();
 // hungry.create();
 
 // hungry.create();
@@ -356,12 +369,13 @@ margaritaDrink.create();
 // margaritaDrink.create();
 
 
-$( '.menuItemDiv' ).children().hide();
+$('.dinnerMenu').children().hide();
 
-$('.firstclass').on('click', function(){
-	$('.menuItemDiv').children("[class*='Plate']").show();
+$('.dinnerMenu').on('click', function(){
+	$(this).children().show();
 	$("[class*='Plate']").children().hide();
 	$("[class*='Plate']").append('<button type = "button" class =  btn btn-default order">Add to Order</button>');
+	$(this).unbind('click');
 })
 
 // $(document).on('click','.firstclass', function(e){
